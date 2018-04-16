@@ -1,4 +1,4 @@
-## AppDynamics App Health dashboard
+## AppDynamics dashboard Visao Geral
 
 1. `pip install -r requirements.txt` (or just install requests)
 2. Edit dashboard.py and add controller credentials
