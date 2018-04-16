@@ -12,7 +12,7 @@
     "refreshInterval": 120000,
     "backgroundColor": 2105376,
     "color": 2105376,
-    "height": 768,
+    "height": 800,
     "width": 1600,
     "canvasType": "CANVAS_TYPE_ABSOLUTE",
     "layoutType": "",

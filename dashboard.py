@@ -44,7 +44,7 @@ def create_widgets_labels(APPS, widget_template):
         if line_position == 0 and counter >= WIDGETS_PER_LINE:
             current_y += y_offset
 
-        new_widget['width'] = len(app) * 10
+        new_widget['width'] = len(app) * 10 + 10
         new_widget['y'] = current_y
 
         base_x = start_x + line_position * x_offset
