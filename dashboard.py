@@ -53,6 +53,7 @@ def create_widgets_labels(APPS, widget_template):
         print('@', new_widget['x'], new_widget['y'])
 
         new_widget["text"] = app
+        new_widget["drillDownUrl"] = "https://{}:{}/controller/#/location=APP_DASHBOARD&timeRange=last_30_minutes.BEFORE_NOW.-1.-1.30&application={}&dashboardMode=force".format(host, port, app_id)
 
         widgets.append(new_widget.copy())
         counter += 1
@@ -79,7 +80,8 @@ def create_widgets_hrs(APPS, widget_template):
         new_widget['x'] = start_x + line_position * x_offset
         new_widget['y'] = current_y
         new_widget['fontSize'] = 12
-
+        new_widget["drillDownUrl"] = "https://{}:{}/controller/#/location=APP_DASHBOARD&timeRange=last_30_minutes.BEFORE_NOW.-1.-1.30&application={}&dashboardMode=force".format(host, port, app_id)
+        
         print('@', new_widget['x'], new_widget['y'])
 
         new_widget["applicationReference"]["applicationName"] = app
