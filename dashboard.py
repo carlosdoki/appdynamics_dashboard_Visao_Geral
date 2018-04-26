@@ -19,7 +19,7 @@ cookies = ''
 importacao = 0
 
 def get_auth(host, port, user, password, account):
-    url = 'https://{}:{}/controller/auth'.format(host, port)
+    url = '{}:{}/controller/auth'.format(host, port)
     headers = {
         'Authorization': 'Basic ' + base64.b64encode(user + "@" + account + ":" + password)  
     }
@@ -35,7 +35,7 @@ def get_auth(host, port, user, password, account):
     return 0
 
 def get_dashboards(host, port, user, password, account):
-    url = 'https://{}:{}/controller/restui/dashboards/getAllDashboardsByType/false'.format(host, port)
+    url = '{}:{}/controller/restui/dashboards/getAllDashboardsByType/false'.format(host, port)
     params = {'output': 'json'}
     headers = {
         'Authorization': 'Basic ' + base64.b64encode(user + "@" + account + ":" + password),
@@ -47,7 +47,7 @@ def get_dashboards(host, port, user, password, account):
 
 
 def get_applications(host, port, user, password, account):
-    url = 'https://{}:{}/controller/rest/applications'.format(host, port)
+    url = '{}:{}/controller/rest/applications'.format(host, port)
     auth = ('{}@{}'.format(user, account), password)
     print(auth)
     params = {'output': 'json'}
@@ -65,7 +65,7 @@ def find_dashboard(dashboards, name):
     return id
 
 def put_dashboard(host, port, user, password, account, dashboard):
-    url = 'https://{}:{}/controller/CustomDashboardImportExportServlet'.format(host, port)
+    url = '{}:{}/controller/CustomDashboardImportExportServlet'.format(host, port)
     auth = ('{}@{}'.format(user, account), password)
     files = {
         'file': (dashboard, open(dashboard, 'rb')),
@@ -104,7 +104,7 @@ def create_widgets_labels(APPS, widget_template, dashboards):
 
         new_widget["text"] = app
         if dash_id != 0:
-            new_widget["drillDownUrl"] = "https://{}:{}/controller/#/location=CDASHBOARD_DETAIL&timeRange=last_30_minutes.BEFORE_NOW.-1.-1.15&mode=MODE_DASHBOARD&dashboard={}".format(host, port, dash_id)
+            new_widget["drillDownUrl"] = "{}:{}/controller/#/location=CDASHBOARD_DETAIL&timeRange=last_30_minutes.BEFORE_NOW.-1.-1.15&mode=MODE_DASHBOARD&dashboard={}".format(host, port, dash_id)
             new_widget["useMetricBrowserAsDrillDown"] = False
         
         widgets.append(new_widget.copy())
@@ -133,7 +133,7 @@ def create_widgets_hrs(APPS, widget_template, dashboards):
         new_widget['y'] = current_y
         new_widget['fontSize'] = 12
         if dash_id != 0:
-            new_widget["drillDownUrl"] = "https://{}:{}/controller/#/location=CDASHBOARD_DETAIL&timeRange=last_30_minutes.BEFORE_NOW.-1.-1.15&mode=MODE_DASHBOARD&dashboard={}".format(host, port, dash_id)
+            new_widget["drillDownUrl"] = "{}:{}/controller/#/location=CDASHBOARD_DETAIL&timeRange=last_30_minutes.BEFORE_NOW.-1.-1.15&mode=MODE_DASHBOARD&dashboard={}".format(host, port, dash_id)
             new_widget["useMetricBrowserAsDrillDown"] = False
         
         print('@', new_widget['x'], new_widget['y'])
@@ -168,7 +168,7 @@ def create_widgets_metric(APPS, widget_template, start_x, start_y, dashboards):
         new_widget['x'] = start_x + line_position * x_offset
         new_widget['y'] = current_y
         if dash_id != 0:
-            new_widget["drillDownUrl"] = "https://{}:{}/controller/#/location=CDASHBOARD_DETAIL&timeRange=last_30_minutes.BEFORE_NOW.-1.-1.15&mode=MODE_DASHBOARD&dashboard={}".format(host, port, dash_id)
+            new_widget["drillDownUrl"] = "{}:{}/controller/#/location=CDASHBOARD_DETAIL&timeRange=last_30_minutes.BEFORE_NOW.-1.-1.15&mode=MODE_DASHBOARD&dashboard={}".format(host, port, dash_id)
             new_widget["useMetricBrowserAsDrillDown"] = False
 
         print('@', new_widget['x'], new_widget['y'])
@@ -223,7 +223,7 @@ def main():
     global account
     global importacao
 
-    try:
+    if len(sys.argv) > 5:
         host = sys.argv[1] 
         port = sys.argv[2]
         user = sys.argv[3]
@@ -237,8 +237,8 @@ def main():
             d = json.load(json_data)
             process(d)
 
-    except:
-        print 'dashboard.py <host> <port> <user> <password> <account> <importacao>'
+    else:
+        print 'dashboard.py <http(s)://host> <port> <user> <password> <account> <importacao>'
         sys.exit(2)
 
 
