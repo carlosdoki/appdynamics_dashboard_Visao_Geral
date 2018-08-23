@@ -4,9 +4,9 @@ import sys
 import base64
 from copy import deepcopy
 
-WIDGETS_PER_LINE = 10
+WIDGETS_PER_LINE = 8
 
-x_offset = 155
+x_offset = 275
 y_offset = 160
 
 host = ''
@@ -42,7 +42,7 @@ def get_dashboards(host, port, user, password, account):
         'X-CSRF-TOKEN' : token
     }
     r = requests.get(url, params=params, headers=headers, cookies=cookies)
-    
+    print(r)
     return sorted(r.json(), key=lambda k: k['name'])
 
 
@@ -79,74 +79,84 @@ def put_dashboard(host, port, user, password, account, dashboard):
 def create_widgets_labels(APPS, widget_template, dashboards):
     print('Creating Labels')
     widgets = []
-    start_x = 10
-    start_y = 0
+    # start_x = 10
+    start_x = widget_template['x']
+    # start_y = 0
+    start_y = widget_template['y']
     current_y = start_y
 
     counter = 0
     for application in APPS:
-        app = application['name'][:20]
-        dash_id = find_dashboard(dashboards, application['name'])
-        print('Creating label for', app)
-        new_widget = widget_template
-        line_position = counter % WIDGETS_PER_LINE
+        if "PRIME" in application['name']:
+            app = application['name']
+            dash_id = find_dashboard(dashboards, application['name'])
+            print('Creating label for', app)
+            new_widget = widget_template
+            line_position = counter % WIDGETS_PER_LINE
 
-        if line_position == 0 and counter >= WIDGETS_PER_LINE:
-            current_y += y_offset
+            if line_position == 0 and counter >= WIDGETS_PER_LINE:
+                current_y += y_offset
 
-        new_widget['width'] = len(app) * 10 + 10
-        new_widget['y'] = current_y
+            # new_widget['width'] = len(app) * 10 + 10
+            new_widget['y'] = current_y
 
-        base_x = start_x + line_position * x_offset
-        new_widget['x'] = base_x + ((130 - len(app) * 10) / 2)
+            base_x = start_x + line_position * x_offset
+            # new_widget['x'] = base_x + ((275 - len(app) * 10) / 2)
+            new_widget['x'] = base_x 
 
-        print('@', new_widget['x'], new_widget['y'])
+            print('@', new_widget['x'], new_widget['y'])
 
-        new_widget["text"] = app
-        if dash_id != 0:
-            new_widget["drillDownUrl"] = "{}:{}/controller/#/location=CDASHBOARD_DETAIL&timeRange=last_30_minutes.BEFORE_NOW.-1.-1.15&mode=MODE_DASHBOARD&dashboard={}".format(host, port, dash_id)
-            new_widget["useMetricBrowserAsDrillDown"] = False
-        
-        widgets.append(new_widget.copy())
-        counter += 1
+            if 'PRIME' in new_widget["text"]:
+                new_widget["text"] = app
+                
+            if dash_id != 0:
+                new_widget["drillDownUrl"] = "{}:{}/controller/#/location=CDASHBOARD_DETAIL&timeRange=last_30_minutes.BEFORE_NOW.-1.-1.15&mode=MODE_DASHBOARD&dashboard={}".format(host, port, dash_id)
+                new_widget["useMetricBrowserAsDrillDown"] = False
+            
+            widgets.append(new_widget.copy())
+            counter += 1
     return widgets
 
 
 def create_widgets_hrs(APPS, widget_template, dashboards):
     widgets = []
-    start_x = 20
-    start_y = 40
+    # start_x = 70
+    # start_y = 40
+    start_x = widget_template['x']
+    start_y = widget_template['y']
+
     current_y = start_y
 
     counter = 0
     for application in APPS:
-        app = application['name']
-        dash_id = find_dashboard(dashboards, application['name'])
-        print('Creating widget for', app)
-        new_widget = widget_template
-        line_position = counter % WIDGETS_PER_LINE
+        if "PRIME" in application['name']: 
+            app = application['name']
+            dash_id = find_dashboard(dashboards, application['name'])
+            print('Creating widget for', app)
+            new_widget = widget_template
+            line_position = counter % WIDGETS_PER_LINE
 
-        if line_position == 0 and counter >= WIDGETS_PER_LINE:
-            current_y += y_offset
+            if line_position == 0 and counter >= WIDGETS_PER_LINE:
+                current_y += y_offset
 
-        new_widget['x'] = start_x + line_position * x_offset
-        new_widget['y'] = current_y
-        new_widget['fontSize'] = 12
-        if dash_id != 0:
-            new_widget["drillDownUrl"] = "{}:{}/controller/#/location=CDASHBOARD_DETAIL&timeRange=last_30_minutes.BEFORE_NOW.-1.-1.15&mode=MODE_DASHBOARD&dashboard={}".format(host, port, dash_id)
-            new_widget["useMetricBrowserAsDrillDown"] = False
-        
-        print('@', new_widget['x'], new_widget['y'])
+            new_widget['x'] = start_x + line_position * x_offset
+            new_widget['y'] = current_y
+            # new_widget['fontSize'] = 12
+            if dash_id != 0:
+                new_widget["drillDownUrl"] = "{}:{}/controller/#/location=CDASHBOARD_DETAIL&timeRange=last_30_minutes.BEFORE_NOW.-1.-1.15&mode=MODE_DASHBOARD&dashboard={}".format(host, port, dash_id)
+                new_widget["useMetricBrowserAsDrillDown"] = False
+            
+            print('@', new_widget['x'], new_widget['y'])
 
-        new_widget["applicationReference"]["applicationName"] = app
-        new_widget["applicationReference"]["entityName"] = app
+            new_widget["applicationReference"]["applicationName"] = app
+            new_widget["applicationReference"]["entityName"] = app
 
-        for entity in new_widget['entityReferences']:
-            entity["applicationName"] = app
+            for entity in new_widget['entityReferences']:
+                entity["applicationName"] = app
 
-        print(new_widget['applicationReference'])
-        widgets.append(deepcopy(new_widget))
-        counter += 1
+            print(new_widget['applicationReference'])
+            widgets.append(deepcopy(new_widget))
+            counter += 1
     return widgets
 
 
@@ -156,32 +166,33 @@ def create_widgets_metric(APPS, widget_template, start_x, start_y, dashboards):
 
     counter = 0
     for application in APPS:
-        app = application['name']
-        dash_id = find_dashboard(dashboards, application['name'])
-        print('Creating metrics for', app)
-        new_widget = widget_template
-        line_position = counter % WIDGETS_PER_LINE
+        if "PRIME" in application['name']:
+            app = application['name']
+            dash_id = find_dashboard(dashboards, application['name'])
+            print('Creating metrics for', app)
+            new_widget = widget_template
+            line_position = counter % WIDGETS_PER_LINE
 
-        if line_position == 0 and counter >= WIDGETS_PER_LINE:
-            current_y += y_offset
+            if line_position == 0 and counter >= WIDGETS_PER_LINE:
+                current_y += y_offset
 
-        new_widget['x'] = start_x + line_position * x_offset
-        new_widget['y'] = current_y
-        if dash_id != 0:
-            new_widget["drillDownUrl"] = "{}:{}/controller/#/location=CDASHBOARD_DETAIL&timeRange=last_30_minutes.BEFORE_NOW.-1.-1.15&mode=MODE_DASHBOARD&dashboard={}".format(host, port, dash_id)
-            new_widget["useMetricBrowserAsDrillDown"] = False
+            new_widget['x'] = start_x + line_position * x_offset
+            new_widget['y'] = current_y
+            if dash_id != 0:
+                new_widget["drillDownUrl"] = "{}:{}/controller/#/location=CDASHBOARD_DETAIL&timeRange=last_30_minutes.BEFORE_NOW.-1.-1.15&mode=MODE_DASHBOARD&dashboard={}".format(host, port, dash_id)
+                new_widget["useMetricBrowserAsDrillDown"] = False
 
-        print('@', new_widget['x'], new_widget['y'])
+            print('@', new_widget['x'], new_widget['y'])
 
-        new_widget['dataSeriesTemplates'][0]['metricMatchCriteriaTemplate'][
-            'applicationName'] = app
-        new_widget['dataSeriesTemplates'][0]['metricMatchCriteriaTemplate'][
-            'entityMatchCriteria']['entityNames'][0]['applicationName'] = app
-        new_widget['dataSeriesTemplates'][0]['metricMatchCriteriaTemplate'][
-            'entityMatchCriteria']['entityNames'][0]['entityName'] = app
+            new_widget['dataSeriesTemplates'][0]['metricMatchCriteriaTemplate'][
+                'applicationName'] = app
+            new_widget['dataSeriesTemplates'][0]['metricMatchCriteriaTemplate'][
+                'entityMatchCriteria']['entityNames'][0]['applicationName'] = app
+            new_widget['dataSeriesTemplates'][0]['metricMatchCriteriaTemplate'][
+                'entityMatchCriteria']['entityNames'][0]['entityName'] = app
 
-        widgets.append(deepcopy(new_widget))
-        counter += 1
+            widgets.append(deepcopy(new_widget))
+            counter += 1
     return widgets
 
 
@@ -200,14 +211,15 @@ def process(dash):
             new_widgets += create_widgets_labels(APPS, widget, dashboards)
 
         if widget['widgetType'] == 'MetricLabelWidget':
-
             new_widgets += create_widgets_metric(APPS,
                                                  widget, widget['x'], widget['y'], dashboards)
 
     new_dash['widgetTemplates'] = new_widgets
 
     # print(json.dumps(new_dash, indent=4, sort_keys=True))
-    with open('new_dash_{}.json'.format(host), 'w') as outfile:
+    host2=host.replace("http://", "")
+    host2=host2.replace("https://", "")
+    with open('new_dash_{}.json'.format(host2), 'w') as outfile:
         json.dump(new_dash, outfile, indent=4, sort_keys=True)
 
     if importacao == '1':
