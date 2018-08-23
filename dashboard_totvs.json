@@ -81,22 +81,6 @@
                     "scopingEntityType": null,
                     "scopingEntityName": null,
                     "subtype": null
-                },
-                {
-                    "applicationName": "PRIME-RM-T00872-LOCALIZA-PROD",
-                    "entityType": "POLICY",
-                    "entityName": "JVM Heap utilization is too high",
-                    "scopingEntityType": null,
-                    "scopingEntityName": null,
-                    "subtype": null
-                },
-                {
-                    "applicationName": "PRIME-RM-T00872-LOCALIZA-PROD",
-                    "entityType": "POLICY",
-                    "entityName": "JVM Garbage Collection Time is too high",
-                    "scopingEntityType": null,
-                    "scopingEntityName": null,
-                    "subtype": null
                 }
             ],
             "entityType": "POLICY",
